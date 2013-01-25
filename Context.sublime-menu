@@ -1,0 +1,5 @@
+[
+    { "caption": "-"},
+    { "command": "handlebars", "caption": "Precompile with Handlebars" },
+    { "caption": "-", "id": "end" }
+]

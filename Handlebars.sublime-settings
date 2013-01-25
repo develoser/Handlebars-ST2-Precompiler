@@ -1,0 +1,13 @@
+{
+	//	Handlebars command
+	"handlebars_exec" : "handlebars",
+
+	//	Allowed extensions
+	"allowed_extensions" : [".hb", ".handlebars", ".html"],
+
+	//	Default options for the compiler	
+	"compiler_options" : ["-m", "-f"],
+
+	//	Finall extension for the compiled file
+	"compiled_extension" : ".js"
+}
