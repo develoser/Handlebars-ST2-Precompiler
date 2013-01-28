@@ -1,14 +1,15 @@
 import sublime
 import sublime_plugin
-import functools
 import os
 import subprocess
 import thread
+import functools
 
 
-#   AsyncProcess class taken from the Default Package
+#   AsyncProcess class taken and modified from the Default Package
 class AsyncProcess(object):
     def __init__(self, command, listener):
+
         self.listener = listener
         self.killed = False
 
@@ -22,14 +23,17 @@ class AsyncProcess(object):
         proc_env = os.environ.copy()
 
         # Create a subprocess with the command specified
+        # As we want to use a shell behaviour we're passing args as string like command parameter
         self.proc = subprocess.Popen(command, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE, startupinfo=startupinfo, env=proc_env,
             shell=True)
 
         if self.proc.stdout:
+            # Create a new thread for read the process
             thread.start_new_thread(self.read_stdout, ())
 
         if self.proc.stderr:
+            # Create a new thread for read any error
             thread.start_new_thread(self.read_stderr, ())
 
     def kill(self):
@@ -37,9 +41,6 @@ class AsyncProcess(object):
             self.killed = True
             self.proc.kill()
             self.listener = None
-
-    def poll(self):
-        return self.proc.poll() == None
 
     # Thread wating for success
     def read_stdout(self):
@@ -52,6 +53,8 @@ class AsyncProcess(object):
             else:
                 self.proc.stdout.close()
                 if self.listener:
+                    # Once the process is done invoke the callback function
+                    # from our listener (HandlebarsCommand)
                     self.listener.on_finished(self)
                 break
 
@@ -72,14 +75,7 @@ class HandlebarsCommand(sublime_plugin.TextCommand):
     This class is used to compile HTML templates using the Handlebars engine.
     This is the version 0.1 of the same.
     """
-
-    def run(self, edit, kill=False):
-
-        if kill:
-            if self.proc:
-                self.proc.kill()
-                self.proc = None
-            return
+    def run(self, edit):
 
         # Get the settings
         self.settings = sublime.load_settings('Handlebars.sublime-settings')
@@ -104,16 +100,26 @@ class HandlebarsCommand(sublime_plugin.TextCommand):
 
         sublime.status_message("Creating the template...")
 
-        # Create the thread
+        # Create the new process and threads
         self.proc = AsyncProcess(osCommand, self)
 
-    # Once the new file has been created we just need to opened
+    def append_data(self, proc, data):
+        print ("append_data")
+        if proc != self.proc:
+            # a second call to exec has been made before the first one
+            # finished, ignore it instead of intermingling the output.
+            if proc:
+                proc.kill()
+            return
+
     def finish(self, proc):
         self.view.window().open_file(self.file_name + self.compiled_extension)
         sublime.status_message("Template created successfully.")
 
+    # On data recived from the process
     def on_data(self, proc, data):
         sublime.set_timeout(functools.partial(self.append_data, proc, data), 0)
 
+    # Once the new file has been created we just need to open it
     def on_finished(self, proc):
         sublime.set_timeout(functools.partial(self.finish, proc), 0)
