@@ -8,10 +8,10 @@ import functools
 
 #   AsyncProcess class taken and modified from the Default Package
 class AsyncProcess(object):
+
     def __init__(self, command, listener):
 
         self.listener = listener
-        self.killed = False
 
         # Hide the console window on Windows
         startupinfo = None
@@ -96,7 +96,8 @@ class HandlebarsCommand(sublime_plugin.TextCommand):
             compiler_options = compiler_options + " " + option
 
         # Create the OS command
-        osCommand = handlebars_exec + " " + self.file_name + " " + compiler_options + " " + self.file_name + self.compiled_extension
+        # FIXME: This behaviour has an security hole. Use the shlex.quotes or shlex.escape with Python 3.3
+        osCommand = handlebars_exec + ' "' + self.file_name + '" ' + compiler_options + ' "' + self.file_name + self.compiled_extension + '"'
 
         sublime.status_message("Creating the template...")
 
@@ -104,7 +105,6 @@ class HandlebarsCommand(sublime_plugin.TextCommand):
         self.proc = AsyncProcess(osCommand, self)
 
     def append_data(self, proc, data):
-        print ("append_data")
         if proc != self.proc:
             # a second call to exec has been made before the first one
             # finished, ignore it instead of intermingling the output.
