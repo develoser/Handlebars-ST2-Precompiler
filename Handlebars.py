@@ -77,6 +77,8 @@ class HandlebarsCommand(sublime_plugin.TextCommand):
     """
     def run(self, edit):
 
+        self.encoding = "utf-8"
+
         # Get the settings
         self.settings = sublime.load_settings('Handlebars.sublime-settings')
 
@@ -96,15 +98,19 @@ class HandlebarsCommand(sublime_plugin.TextCommand):
             compiler_options = compiler_options + " " + option
 
         # Create the OS command
-        # FIXME: This behaviour has an security hole. Use the shlex.quotes or shlex.escape with Python 3.3
         osCommand = handlebars_exec + ' "' + self.file_name + '" ' + compiler_options + ' "' + self.file_name + self.compiled_extension + '"'
 
         sublime.status_message("Creating the template...")
 
         # Create the new process and threads
-        self.proc = AsyncProcess(osCommand, self)
+        try:
+            self.proc = AsyncProcess(osCommand, self)
+        except Exception, e:
+            sublime.status_message(str(e).decode(self.encoding))
+            self.append_data(None)
 
     def append_data(self, proc, data):
+
         if proc != self.proc:
             # a second call to exec has been made before the first one
             # finished, ignore it instead of intermingling the output.
@@ -113,8 +119,11 @@ class HandlebarsCommand(sublime_plugin.TextCommand):
             return
 
     def finish(self, proc):
-        self.view.window().open_file(self.file_name + self.compiled_extension)
-        sublime.status_message("Template created successfully.")
+
+        try:
+            self.view.window().open_file(self.file_name + self.compiled_extension)
+        except Exception, e:
+            sublime.status_message(str(e).decode(self.encoding))
 
     # On data recived from the process
     def on_data(self, proc, data):
