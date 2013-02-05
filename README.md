@@ -1,7 +1,7 @@
 Handlebars Precompiler for Sublime Text 2
 ==========================
 
-This is a little plugin for [Sublime Text 2](http://www.sublimetext.com/2). You can precompile templates using the [Handlebarsjs](http://handlebarsjs.com/) inside this cool IDE :)
+This is a little plugin for [Sublime Text 2](http://www.sublimetext.com/2). You can precompile templates using the [Handlebars.js](http://handlebarsjs.com/) engine inside this cool IDE :)
 
 ## Install
 
@@ -9,15 +9,15 @@ This is a little plugin for [Sublime Text 2](http://www.sublimetext.com/2). You 
 * Next, install the [Handlebars](http://handlebarsjs.com/precompilation.html) npm package:
 
 ```
-  $ npm install handlebars -g
+  $ npm install -g handlebars
 ```
 
-* Finally just clone/download this repository into your Packages folder
+* Finally just clone/download this repository into your Packages folder as *"Handlebars-ST2-Precompiler"*
 
 ## Usage
 
 * Open a template with the default extension: **.hb, .handlebars or .html** *Note: You can add more extensions as you need.*
-* If all are ok, when you do a right click you will see a new option in the context menu called: **Precompile with Handlebars**, select this option.
+* If all are ok on right click you will see a new option in the context menu called: **Precompile with Handlebars**, select this option.
 * A new precompiled file is created and opened in a new tab (with a **.js** extension, the same is also configurable).
 * And thats all!
 
