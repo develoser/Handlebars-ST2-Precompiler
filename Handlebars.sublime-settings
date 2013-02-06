@@ -3,7 +3,7 @@
 	"handlebars_exec" : "handlebars",
 
 	//	Allowed extensions
-	"allowed_extensions" : [".hb", ".handlebars", ".html"],
+	"allowed_extensions" : [".hb", ".hbs", ".handlebars", ".html"],
 
 	//	Default options for the compiler	
 	"compiler_options" : ["-m", "-f"],
