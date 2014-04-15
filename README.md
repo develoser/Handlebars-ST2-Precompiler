@@ -28,7 +28,7 @@ The plugin comes with a few default options like following:
 ```
   {
   	"handlebars_exec" : "handlebars",
-  	"allowed_extensions" : [".hb", ".handlebars", ".html"],
+  	"allowed_extensions" : [".hb", ".hbs", ".handlebars", ".html"],
   	"compiler_options" : ["-m", "-f"],
   	"compiled_extension" : ".js"
   }
